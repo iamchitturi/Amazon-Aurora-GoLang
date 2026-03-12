@@ -5,6 +5,8 @@ This is a Go implementation of the Amazon Aurora case study simulation, featurin
 2. **Quorum-Based Replication** (Log-structured replication) for data consistency.
 3. **Leader Health Monitoring** and automatic failover.
 
+---
+
 ## Setup Instructions
 
 ### 1. Configure the Cluster
@@ -12,21 +14,45 @@ Edit `cluster_config.json` to include the IP addresses of the 4 laptops in your 
 - If testing on a single laptop, you can keep the IPs as `127.0.0.1` but ensure the ports are unique.
 - If using multiple laptops, change `127.0.0.1` to the actual Local IP of each laptop (e.g., `192.168.1.5`).
 
-### 2. How to Run (Node)
-On each laptop, run:
-```cmd
-run_node.bat
-```
-Enter the ID corresponding to that laptop (1, 2, 3, or 4).
+### 2. How to Run (Direct Commands)
 
-### 3. How to Run (Client)
-On any laptop, run:
-```cmd
-run_client.bat
+Open a terminal (CMD or PowerShell) in the `go-aurora` folder on each laptop and run the following based on the node ID:
+
+**On Laptop 1:**
+```bash
+go run node.go 1
 ```
-Use the command `write <key> <value>` to test Quorum replication.
+
+**On Laptop 2:**
+```bash
+go run node.go 2
+```
+
+**On Laptop 3:**
+```bash
+go run node.go 3
+```
+
+**On Laptop 4:**
+```bash
+go run node.go 4
+```
+
+### 3. How to Run the Client
+On any laptop, run the following command to start the simulator:
+```bash
+go run client.go
+```
+
+**Commands inside the client terminal:**
+- `write <key> <value>`: Simulates a Quorum-based write.
+- `read <key>`: Simulates a consistent read from the leader.
+- `exit`: Close the simulator.
+
+---
 
 ## Key Logic Details
-- **Quorum**: Requires (N/2)+1 ACKs. In a 4-node cluster, 3 nodes must ACK the write for it to succeed.
-- **Election**: Uses the Bully algorithm. If the leader fails, the node with the highest ID becomes the new leader.
+- **Quorum**: Requires $(N/2)+1$ ACKs. In a 4-node cluster, 3 nodes must ACK the write for it to succeed.
+- **Election**: Uses the **Bully algorithm**. If the leader fails, the node with the highest ID becomes the new leader.
 - **Consistency**: High consistency (Read/Write Quorum principles).
+- **Persistence**: Replicated log segments are stored in `storage_node_X.json` files for durability.
