@@ -97,7 +97,7 @@ func sendMessage(targetID int, msg Message, timeout time.Duration) (*Message, er
 		return nil, fmt.Errorf("node %d not found in config", targetID)
 	}
 
-	address := fmt.Sprintf("%s:%d", target.IP, target.Port)
+	address := net.JoinHostPort(target.IP, strconv.Itoa(target.Port))
 	conn, err := net.DialTimeout("tcp", address, timeout)
 	if err != nil {
 		return nil, err

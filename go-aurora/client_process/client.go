@@ -73,7 +73,7 @@ func sendRequest(targetID int, msg Message) (*Message, error) {
 		return nil, fmt.Errorf("node %d not found", targetID)
 	}
 
-	address := fmt.Sprintf("%s:%d", target.IP, target.Port)
+	address := net.JoinHostPort(target.IP, strconv.Itoa(target.Port))
 	conn, err := net.DialTimeout("tcp", address, 2*time.Second)
 	if err != nil {
 		return nil, err
@@ -100,11 +100,12 @@ func main() {
 
 	fmt.Println("=========================================================")
 	fmt.Println("      Amazon Aurora Client Simulator Interface (GO)")
-	fmt.Println("=========================================================\n")
+	fmt.Println("=========================================================")
+
 	fmt.Println("Commands:")
 	fmt.Println("  write <key> <value>   - Send log-structured write to leader")
 	fmt.Println("  read <key>            - Read data from the leader")
-	fmt.Println("  exit                  - Close client\n")
+	fmt.Println("  exit                  - Close client")
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
