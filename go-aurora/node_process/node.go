@@ -53,9 +53,9 @@ var (
 )
 
 func loadConfig() {
-	file, err := os.Open("cluster_config.json")
+	file, err := os.Open("../cluster_config.json")
 	if err != nil {
-		fmt.Printf(ColorRed + "Error: cluster_config.json not found." + ColorReset + "\n")
+		fmt.Printf(ColorRed + "Error: cluster_config.json not found in parent directory." + ColorReset + "\n")
 		return
 	}
 	defer file.Close()
@@ -97,7 +97,7 @@ func sendMessage(targetID int, msg Message, timeout time.Duration) (*Message, er
 		return nil, fmt.Errorf("node %d not found in config", targetID)
 	}
 
-	address := fmt.Sprintf("%s:%d", target.IP, target.Port)
+	address := net.JoinHostPort(target.IP, strconv.Itoa(target.Port))
 	conn, err := net.DialTimeout("tcp", address, timeout)
 	if err != nil {
 		return nil, err
