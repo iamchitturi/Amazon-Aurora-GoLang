@@ -37,9 +37,9 @@ var (
 )
 
 func loadConfig() {
-	file, err := os.Open("cluster_config.json")
+	file, err := os.Open("../cluster_config.json")
 	if err != nil {
-		fmt.Printf("Error: cluster_config.json not found.\n")
+		fmt.Printf("Error: cluster_config.json not found in parent directory.\n")
 		os.Exit(1)
 	}
 	defer file.Close()
@@ -73,7 +73,7 @@ func sendRequest(targetID int, msg Message) (*Message, error) {
 		return nil, fmt.Errorf("node %d not found", targetID)
 	}
 
-	address := fmt.Sprintf("%s:%d", target.IP, target.Port)
+	address := net.JoinHostPort(target.IP, strconv.Itoa(target.Port))
 	conn, err := net.DialTimeout("tcp", address, 2*time.Second)
 	if err != nil {
 		return nil, err
@@ -100,11 +100,12 @@ func main() {
 
 	fmt.Println("=========================================================")
 	fmt.Println("      Amazon Aurora Client Simulator Interface (GO)")
-	fmt.Println("=========================================================\n")
+	fmt.Println("=========================================================")
+
 	fmt.Println("Commands:")
 	fmt.Println("  write <key> <value>   - Send log-structured write to leader")
 	fmt.Println("  read <key>            - Read data from the leader")
-	fmt.Println("  exit                  - Close client\n")
+	fmt.Println("  exit                  - Close client")
 
 	scanner := bufio.NewScanner(os.Stdin)
 	for {
@@ -125,7 +126,7 @@ func main() {
 		}
 
 		if cmd == "write" || cmd == "read" {
-			if cmd == "write" && len(parts) != 3 {
+			if cmd == "write" && len(parts) < 3 {
 				fmt.Println("Error: Invalid syntax. Usage: write <key> <value>")
 				continue
 			}
@@ -138,7 +139,10 @@ func main() {
 			var value string
 			var msgType string
 			if cmd == "write" {
-				value = parts[2]
+				// Join all words after the key into one value strings
+				value = strings.Join(parts[2:], " ")
+				// Remove quotes if the user provided them
+				value = strings.Trim(value, "\"")
 				msgType = "WRITE"
 				fmt.Printf("Action: Sending WRITE request [%s=%s] to Leader Node %d...\n", key, value, leaderID)
 			} else {
