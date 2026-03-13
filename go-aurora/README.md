@@ -16,31 +16,30 @@ Edit `cluster_config.json` to include the IP addresses of the 4 laptops in your 
 
 ### 2. How to Run (Direct Commands)
 
-Open a terminal (CMD or PowerShell) in the `go-aurora` folder on each laptop and run the following based on the node ID:
+Open a terminal (CMD or PowerShell) and go to the specific sub-folder on each laptop:
 
 **On Laptop 1:**
 ```bash
+cd node_process
 go run node.go 1
 ```
 
 **On Laptop 2:**
 ```bash
+cd node_process
 go run node.go 2
 ```
 
 **On Laptop 3:**
 ```bash
+cd node_process
 go run node.go 3
 ```
 
-**On Laptop 4:**
-```bash
-go run node.go 4
-```
-
 ### 3. How to Run the Client
-On any laptop, run the following command to start the simulator:
+On any laptop, navigate to the client folder and start the simulator:
 ```bash
+cd client_process
 go run client.go
 ```
 
