@@ -53,9 +53,9 @@ var (
 )
 
 func loadConfig() {
-	file, err := os.Open("cluster_config.json")
+	file, err := os.Open("../cluster_config.json")
 	if err != nil {
-		fmt.Printf(ColorRed + "Error: cluster_config.json not found." + ColorReset + "\n")
+		fmt.Printf(ColorRed + "Error: cluster_config.json not found in parent directory." + ColorReset + "\n")
 		return
 	}
 	defer file.Close()
